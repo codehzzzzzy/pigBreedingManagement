@@ -2,7 +2,7 @@ package com.hzzzzzy.project.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.hzzzzzy.project.common.DeleteRequest;
+import com.hzzzzzy.project.model.dto.user.UserDeleteRequest;
 import com.hzzzzzy.project.model.dto.user.UserAddRequest;
 import com.hzzzzzy.project.model.dto.user.UserUpdateRequest;
 import com.hzzzzzy.project.model.entity.User;
@@ -65,11 +65,11 @@ public interface UserService extends IService<User> {
     /**
      * 总管理员 删除 普通管理员
      *
-     * @param deleteRequest
+     * @param userDeleteRequest
      * @param request
      * @return
      */
-    boolean delete(DeleteRequest deleteRequest, HttpServletRequest request);
+    boolean delete(UserDeleteRequest userDeleteRequest, HttpServletRequest request);
 
 
     /**

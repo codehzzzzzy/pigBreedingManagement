@@ -170,8 +170,9 @@ public class PigServiceImpl extends ServiceImpl<PigMapper, Pig>
      * @param sheetBuilder
      */
     @Override
-    public void export(HttpServletResponse response,ExcelWriterSheetBuilder sheetBuilder) {
+    public boolean export(HttpServletResponse response,ExcelWriterSheetBuilder sheetBuilder) {
         sheetBuilder.doWrite(dataTemplate());
+        return true;
     }
     //处理数据
     protected List<PigExcel> dataTemplate() {

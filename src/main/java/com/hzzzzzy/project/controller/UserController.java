@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.hzzzzzy.project.common.BaseResponse;
-import com.hzzzzzy.project.common.DeleteRequest;
+import com.hzzzzzy.project.model.dto.user.UserDeleteRequest;
 import com.hzzzzzy.project.common.ErrorCode;
 import com.hzzzzzy.project.common.ResultUtils;
 import com.hzzzzzy.project.exception.BusinessException;
@@ -124,12 +124,12 @@ public class UserController {
     /**
      * 总管理员 删除 普通管理员
      *
-     * @param deleteRequest
+     * @param userDeleteRequest
      * @return
      */
     @PostMapping("/delete")
-    public BaseResponse<Boolean> delete(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
-        boolean flag = userService.delete(deleteRequest, request);
+    public BaseResponse<Boolean> delete(@RequestBody UserDeleteRequest userDeleteRequest, HttpServletRequest request) {
+        boolean flag = userService.delete(userDeleteRequest, request);
         return ResultUtils.success(flag);
     }
 

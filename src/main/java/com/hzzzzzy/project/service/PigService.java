@@ -68,5 +68,5 @@ public interface PigService extends IService<Pig> {
      *
      * @param response
      */
-    void export(HttpServletResponse response, ExcelWriterSheetBuilder sheetBuilder);
+    boolean export(HttpServletResponse response, ExcelWriterSheetBuilder sheetBuilder);
 }

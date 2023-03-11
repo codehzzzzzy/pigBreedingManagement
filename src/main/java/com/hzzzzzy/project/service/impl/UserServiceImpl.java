@@ -2,7 +2,7 @@ package com.hzzzzzy.project.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.hzzzzzy.project.common.DeleteRequest;
+import com.hzzzzzy.project.model.dto.user.UserDeleteRequest;
 import com.hzzzzzy.project.common.ErrorCode;
 import com.hzzzzzy.project.constant.UserConstant;
 import com.hzzzzzy.project.exception.BusinessException;
@@ -192,21 +192,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     /**
      * 总管理员 删除 普通管理员
      *
-     * @param deleteRequest
+     * @param userDeleteRequest
      * @param request
      * @return
      */
     @Override
-    public boolean delete(DeleteRequest deleteRequest, HttpServletRequest request) {
+    public boolean delete(UserDeleteRequest userDeleteRequest, HttpServletRequest request) {
         //判断当前角色是否为总管理员
         User loginUser = getLoginUser(request);
         if (loginUser.getType() != UserConstant.GENERAL_ADMIN) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
+        if (userDeleteRequest == null || userDeleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean flag = this.removeById(deleteRequest.getId());
+        boolean flag = this.removeById(userDeleteRequest.getId());
         return flag;
     }
 

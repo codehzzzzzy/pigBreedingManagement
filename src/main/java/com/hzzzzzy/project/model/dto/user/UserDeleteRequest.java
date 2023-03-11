@@ -1,4 +1,4 @@
-package com.hzzzzzy.project.common;
+package com.hzzzzzy.project.model.dto.user;
 
 import lombok.Data;
 
@@ -7,10 +7,10 @@ import java.io.Serializable;
 /**
  * 删除请求
  *
- * @author yupi
+ * @author hzzzzzy
  */
 @Data
-public class DeleteRequest implements Serializable {
+public class UserDeleteRequest implements Serializable {
     /**
      * id
      */

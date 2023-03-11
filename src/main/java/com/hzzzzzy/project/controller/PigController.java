@@ -22,7 +22,7 @@ import java.util.List;
 
 
 /**
- * 肉猪信息接口
+ * 肉猪管理接口
  *
  * @author hzzzzzy
  */
@@ -107,21 +107,10 @@ public class PigController {
      * @throws Exception
      */
     @RequestMapping("/export")
-    public void exportExcel(HttpServletResponse response){
+    public BaseResponse<Boolean> exportExcel(HttpServletResponse response){
         ExcelWriterSheetBuilder sheetBuilder = ExcelUtils.export(response);
-        pigService.export(response,sheetBuilder);
-        sheetBuilder.doWrite(dataTemplate());
-    }
-
-    protected List<PigExcel> dataTemplate() {
-        ArrayList<PigExcel> pigExcels = new ArrayList<>();
-        List<Pig> pigList = pigService.list();
-        pigList.forEach((Pig pig)->{
-            PigExcel pigExcel = new PigExcel();
-            BeanUtils.copyProperties(pig,pigExcel);
-            pigExcels.add(pigExcel);
-        });
-        return pigExcels;
+        boolean flag = pigService.export(response, sheetBuilder);
+        return ResultUtils.success(flag);
     }
 
 
