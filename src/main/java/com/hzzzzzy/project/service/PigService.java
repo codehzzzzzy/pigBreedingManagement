@@ -3,9 +3,11 @@ package com.hzzzzzy.project.service;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hzzzzzy.project.model.dto.pig.PigAddRequest;
+import com.hzzzzzy.project.model.dto.pig.PigDeleteRequest;
 import com.hzzzzzy.project.model.dto.pig.PigUpdateRequest;
 import com.hzzzzzy.project.model.entity.Pig;
-import com.hzzzzzy.project.model.vo.PigVo;
+import com.hzzzzzy.project.model.vo.PigDetailVO;
+import com.hzzzzzy.project.model.vo.PigVO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,7 +62,7 @@ public interface PigService extends IService<Pig> {
      * @param id
      * @return
      */
-    PigVo getAllById(int id);
+    PigDetailVO getDetailById(int id);
 
 
     /**
@@ -69,4 +71,22 @@ public interface PigService extends IService<Pig> {
      * @param response
      */
     boolean export(HttpServletResponse response, ExcelWriterSheetBuilder sheetBuilder);
+
+
+    /**
+     * 肉猪信息管理员 删除 肉猪信息
+     *
+     * @param pigDeleteRequest
+     * @param request
+     * @return
+     */
+    boolean delete(PigDeleteRequest pigDeleteRequest, HttpServletRequest request);
+
+
+    /**
+     * 获取所有肉猪详细信息列表
+     *
+     * @return
+     */
+    List<PigVO> getAll();
 }

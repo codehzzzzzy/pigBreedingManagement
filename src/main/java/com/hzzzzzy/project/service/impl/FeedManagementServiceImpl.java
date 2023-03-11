@@ -8,13 +8,18 @@ import com.hzzzzzy.project.common.ResultUtils;
 import com.hzzzzzy.project.exception.BusinessException;
 import com.hzzzzzy.project.mapper.FeedManagementMapper;
 import com.hzzzzzy.project.model.dto.feed.FeedAddRequest;
+import com.hzzzzzy.project.model.dto.feed.FeedDeleteRequest;
 import com.hzzzzzy.project.model.dto.feed.FeedManagementExcel;
 import com.hzzzzzy.project.model.dto.feed.FeedUpdateRequest;
 import com.hzzzzzy.project.model.dto.pig.PigExcel;
 import com.hzzzzzy.project.model.dto.pig.PigUpdateRequest;
 import com.hzzzzzy.project.model.entity.FeedManagement;
+import com.hzzzzzy.project.model.entity.Hogring;
 import com.hzzzzzy.project.model.entity.Pig;
 import com.hzzzzzy.project.model.entity.User;
+import com.hzzzzzy.project.model.vo.FeedGetOneVO;
+import com.hzzzzzy.project.model.vo.FeedVO;
+import com.hzzzzzy.project.model.vo.HoringVO;
 import com.hzzzzzy.project.service.FeedManagementService;
 import com.hzzzzzy.project.service.UserService;
 import org.springframework.beans.BeanUtils;
@@ -41,6 +46,7 @@ public class FeedManagementServiceImpl extends ServiceImpl<FeedManagementMapper,
     implements FeedManagementService {
     @Autowired
     private UserService userService;
+
 
     /**
      * 判断是否为当前模块管理员
@@ -131,6 +137,75 @@ public class FeedManagementServiceImpl extends ServiceImpl<FeedManagementMapper,
         feedManagement.setFeeder(loginUser.getId());
         boolean result = this.updateById(feedManagement);
         return result;
+    }
+
+    /**
+     * 饲料信息管理员 删除 饲料信息
+     *
+     * @param feedDeleteRequest
+     * @param request
+     * @return
+     */
+    @Override
+    public boolean delete(FeedDeleteRequest feedDeleteRequest, HttpServletRequest request) {
+        //判断是否为当前模块管理员
+        if (!isAdmin(request)){
+            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR);
+        }
+        if (feedDeleteRequest == null || feedDeleteRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        boolean flag = this.removeById(feedDeleteRequest.getId());
+        return flag;
+    }
+
+
+    /**
+     * 通过饲料id获取详细信息
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public FeedGetOneVO getDetailById(int id) {
+        if (id <= 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        FeedManagement feedManagement = this.getById(id);
+        if (feedManagement == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        FeedGetOneVO feedGetOneVO = new FeedGetOneVO();
+        BeanUtils.copyProperties(feedManagement,feedGetOneVO);
+        //手动填充管理员类型信息
+        Long feeder = feedGetOneVO.getFeeder();
+        User user = userService.getById(feeder);
+        Integer type = user.getType();
+        if (type == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        feedGetOneVO.setFeeder_type(type);
+        return feedGetOneVO;
+    }
+
+
+    /**
+     * 获取所有饲料的粗略信息
+     *
+     */
+    @Override
+    public List<FeedVO> getAll() {
+        List<FeedManagement> feedManagementList = this.list();
+        if (feedManagementList == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        List<FeedVO> feedVOList = new ArrayList<>();
+        feedManagementList.forEach((FeedManagement feedManagement) -> {
+            FeedVO feedVO = new FeedVO();
+            BeanUtils.copyProperties(feedManagement,feedVO);
+            feedVOList.add(feedVO);
+        });
+        return feedVOList;
     }
 }
 

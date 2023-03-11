@@ -8,18 +8,25 @@ import com.hzzzzzy.project.common.ExcelUtils;
 import com.hzzzzzy.project.common.ResultUtils;
 import com.hzzzzzy.project.exception.BusinessException;
 import com.hzzzzzy.project.model.dto.feed.FeedAddRequest;
+import com.hzzzzzy.project.model.dto.feed.FeedDeleteRequest;
 import com.hzzzzzy.project.model.dto.feed.FeedUpdateRequest;
 import com.hzzzzzy.project.model.dto.pig.PigAddRequest;
+import com.hzzzzzy.project.model.dto.pig.PigDeleteRequest;
 import com.hzzzzzy.project.model.dto.pig.PigUpdateRequest;
+import com.hzzzzzy.project.model.entity.FeedManagement;
+import com.hzzzzzy.project.model.entity.Hogring;
+import com.hzzzzzy.project.model.vo.FeedGetOneVO;
+import com.hzzzzzy.project.model.vo.FeedVO;
+import com.hzzzzzy.project.model.vo.HoringVO;
 import com.hzzzzzy.project.service.FeedManagementService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 饲料管理接口
@@ -63,7 +70,7 @@ public class FeedController {
 
 
     /**
-     * 肉猪信息管理员更新肉猪信息
+     * 饲料信息管理员 更新 饲料信息
      *
      * @param feedUpdateRequest
      * @param request
@@ -74,6 +81,47 @@ public class FeedController {
         boolean flag = feedManagementService.update(feedUpdateRequest, request);
         return ResultUtils.success(flag);
     }
+
+
+    /**
+     * 饲料信息管理员 删除 饲料信息
+     *
+     * @param feedDeleteRequest
+     * @return
+     */
+    @PostMapping("/delete")
+    public BaseResponse<Boolean> delete(@RequestBody FeedDeleteRequest feedDeleteRequest, HttpServletRequest request) {
+        boolean flag = feedManagementService.delete(feedDeleteRequest, request);
+        return ResultUtils.success(flag);
+    }
+
+
+    /**
+     * 通过饲料id获取详细信息
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/getById")
+    public BaseResponse<FeedGetOneVO> getById(int id){
+        FeedGetOneVO feedVO = feedManagementService.getDetailById(id);
+        return ResultUtils.success(feedVO);
+    }
+
+
+    /**
+     * 获取所有饲料的粗略信息
+     *
+     * @return
+     */
+    @GetMapping("/getAll")
+    public BaseResponse<List<FeedVO>> getAll(){
+        List<FeedVO> feedVOList = feedManagementService.getAll();
+        return ResultUtils.success(feedVOList);
+
+    }
+
+
 
 
 }

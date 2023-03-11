@@ -6,18 +6,18 @@ import com.hzzzzzy.project.common.ExcelUtils;
 import com.hzzzzzy.project.common.ResultUtils;
 import com.hzzzzzy.project.exception.BusinessException;
 import com.hzzzzzy.project.model.dto.pig.PigAddRequest;
-import com.hzzzzzy.project.model.dto.pig.PigExcel;
+import com.hzzzzzy.project.model.dto.pig.PigDeleteRequest;
 import com.hzzzzzy.project.model.dto.pig.PigUpdateRequest;
-import com.hzzzzzy.project.model.vo.PigVo;
+import com.hzzzzzy.project.model.dto.user.UserDeleteRequest;
+import com.hzzzzzy.project.model.vo.PigDetailVO;
+import com.hzzzzzy.project.model.vo.PigVO;
 import com.hzzzzzy.project.service.PigService;
 import com.hzzzzzy.project.model.entity.Pig;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -57,14 +57,14 @@ public class PigController {
 
 
     /**
-     * 关联查询肉猪和所在猪舍信息
+     * 关联查询肉猪详细信息
      *
      * @param id
      * @return
      */
     @GetMapping("/getById")
-    public BaseResponse<PigVo> getById(int id){
-        PigVo pigVo = pigService.getAllById(id);
+    public BaseResponse<PigDetailVO> getById(int id){
+        PigDetailVO pigVo = pigService.getDetailById(id);
         return ResultUtils.success(pigVo);
     }
 
@@ -114,19 +114,30 @@ public class PigController {
     }
 
 
+    /**
+     * 肉猪信息管理员 删除 肉猪信息
+     *
+     * @param pigDeleteRequest
+     * @return
+     */
+    @PostMapping("/delete")
+    public BaseResponse<Boolean> delete(@RequestBody PigDeleteRequest pigDeleteRequest, HttpServletRequest request) {
+        boolean flag = pigService.delete(pigDeleteRequest, request);
+        return ResultUtils.success(flag);
+    }
 
 
 
-
-
-
-
-
-
-
-
-
-
+    /**
+     * 获取所有肉猪详细信息列表
+     *
+     * @return
+     */
+    @GetMapping("/getAll")
+    public BaseResponse<List<PigVO>> getAll(){
+        List<PigVO> pigVo = pigService.getAll();
+        return ResultUtils.success(pigVo);
+    }
 
 
 

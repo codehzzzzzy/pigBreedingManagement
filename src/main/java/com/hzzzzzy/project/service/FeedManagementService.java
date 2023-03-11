@@ -3,11 +3,15 @@ package com.hzzzzzy.project.service;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hzzzzzy.project.model.dto.feed.FeedAddRequest;
+import com.hzzzzzy.project.model.dto.feed.FeedDeleteRequest;
 import com.hzzzzzy.project.model.dto.feed.FeedUpdateRequest;
 import com.hzzzzzy.project.model.entity.FeedManagement;
+import com.hzzzzzy.project.model.vo.FeedGetOneVO;
+import com.hzzzzzy.project.model.vo.FeedVO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
 * @author hzzzzzy
@@ -44,4 +48,29 @@ public interface FeedManagementService extends IService<FeedManagement> {
      * @return
      */
     boolean update(FeedUpdateRequest feedUpdateRequest, HttpServletRequest request);
+
+
+    /**
+     * 饲料信息管理员 删除 饲料信息
+     *
+     * @param feedDeleteRequest
+     * @param request
+     * @return
+     */
+    boolean delete(FeedDeleteRequest feedDeleteRequest, HttpServletRequest request);
+
+
+    /**
+     * 通过饲料id获取详细信息
+     *
+     * @param id
+     */
+    FeedGetOneVO getDetailById(int id);
+
+    /**
+     * 获取所有饲料的信息
+     *
+     */
+    List<FeedVO> getAll();
+
 }

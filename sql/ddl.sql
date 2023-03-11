@@ -8,7 +8,7 @@ CREATE TABLE hogring (
     hogring_id INT AUTO_INCREMENT PRIMARY KEY COMMENT '猪舍id 主键',
     hogring_area DECIMAL(10, 2) COMMENT '猪舍面积',
     hogring_capacity INT COMMENT '猪舍容量',
-    hogring_status tinyint  COMMENT '猪舍状态',
+    hogring_status tinyint  COMMENT '猪舍状态(0-干净,1-脏乱)',
     user_id bigint(20) COMMENT '管理人员id',
     pig_id varchar(512) COMMENT '猪只id'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='猪舍';

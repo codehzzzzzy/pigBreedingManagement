@@ -4,14 +4,18 @@ import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hzzzzzy.project.common.ErrorCode;
+import com.hzzzzzy.project.constant.UserConstant;
 import com.hzzzzzy.project.exception.BusinessException;
 import com.hzzzzzy.project.mapper.PigMapper;
 import com.hzzzzzy.project.model.dto.pig.PigAddRequest;
+import com.hzzzzzy.project.model.dto.pig.PigDeleteRequest;
 import com.hzzzzzy.project.model.dto.pig.PigExcel;
 import com.hzzzzzy.project.model.dto.pig.PigUpdateRequest;
 import com.hzzzzzy.project.model.entity.Hogring;
 import com.hzzzzzy.project.model.entity.Pig;
-import com.hzzzzzy.project.model.vo.PigVo;
+import com.hzzzzzy.project.model.entity.User;
+import com.hzzzzzy.project.model.vo.PigDetailVO;
+import com.hzzzzzy.project.model.vo.PigVO;
 import com.hzzzzzy.project.service.HogringService;
 import com.hzzzzzy.project.service.PigService;
 import com.hzzzzzy.project.service.UserService;
@@ -143,17 +147,17 @@ public class PigServiceImpl extends ServiceImpl<PigMapper, Pig>
 
 
     /**
-     * 关联查询肉猪和所在猪舍信息
+     * 关联查询肉猪详细信息
      *
      * @param id
      * @return
      */
     @Override
-    public PigVo getAllById(int id) {
+    public PigDetailVO getDetailById(int id) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        PigVo pigVo = new PigVo();
+        PigDetailVO pigVo = new PigDetailVO();
         Pig pig = this.getById(id);
         Integer hogringId = pig.getHogringId();
         Hogring hogring = hogringService.getById(hogringId);
@@ -184,6 +188,50 @@ public class PigServiceImpl extends ServiceImpl<PigMapper, Pig>
             pigExcels.add(pigExcel);
         });
         return pigExcels;
+    }
+
+    /**
+     * 肉猪信息管理员 删除 肉猪信息
+     *
+     * @param pigDeleteRequest
+     * @param request
+     * @return
+     */
+    @Override
+    public boolean delete(PigDeleteRequest pigDeleteRequest, HttpServletRequest request) {
+        //判断是否为当前模块管理员
+        if (!isAdmin(request)){
+            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR);
+        }
+        if (pigDeleteRequest == null || pigDeleteRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        boolean flag = this.removeById(pigDeleteRequest.getId());
+        if (!flag){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"删除信息失败");
+        }
+        return flag;
+    }
+
+
+    /**
+     * 获取所有肉猪详细信息列表
+     *
+     * @return
+     */
+    @Override
+    public List<PigVO> getAll() {
+        List<Pig> pigList = this.list();
+        if (pigList == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        List<PigVO> pigVOList = new ArrayList<>();
+        pigList.forEach((Pig pig)->{
+            PigVO pigVO = new PigVO();
+            BeanUtils.copyProperties(pig,pigVO);
+            pigVOList.add(pigVO);
+        });
+        return pigVOList;
     }
 }
 
