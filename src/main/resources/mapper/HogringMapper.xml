@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hzzzzzy.project.mapper.HogringMapper">
+
+    <resultMap id="BaseResultMap" type="com.hzzzzzy.project.model.entity.Hogring">
+            <id property="hogringId" column="hogring_id" jdbcType="INTEGER"/>
+            <result property="hogringArea" column="hogring_area" jdbcType="DECIMAL"/>
+            <result property="hogringCapacity" column="hogring_capacity" jdbcType="INTEGER"/>
+            <result property="hogringStatus" column="hogring_status" jdbcType="TINYINT"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="pigId" column="pig_id" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        hogring_id,hogring_area,hogring_capacity,
+        hogring_status,user_id,pig_id
+    </sql>
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hzzzzzy.project.mapper.FeedManagementMapper">
+
+    <resultMap id="BaseResultMap" type="com.hzzzzzy.project.model.entity.FeedManagement">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="feedType" column="feed_type" jdbcType="VARCHAR"/>
+            <result property="hogringId" column="hogring_id" jdbcType="INTEGER"/>
+            <result property="feedAmount" column="feed_amount" jdbcType="DECIMAL"/>
+            <result property="feeder" column="feeder" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,feed_type,hogring_id,
+        feed_amount,feeder
+    </sql>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hzzzzzy.project.mapper.PigInOutMapper">
+
+    <resultMap id="BaseResultMap" type="com.hzzzzzy.project.model.entity.PigInOut">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="pigId" column="pig_id" jdbcType="INTEGER"/>
+            <result property="hogringId" column="hogring_id" jdbcType="INTEGER"/>
+            <result property="inTime" column="in_time" jdbcType="TIMESTAMP"/>
+            <result property="outTime" column="out_time" jdbcType="TIMESTAMP"/>
+            <result property="source" column="source" jdbcType="VARCHAR"/>
+            <result property="destination" column="destination" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,pig_id,hogring_id,
+        in_time,out_time,`source`,
+        destination
+    </sql>
+</mapper>
