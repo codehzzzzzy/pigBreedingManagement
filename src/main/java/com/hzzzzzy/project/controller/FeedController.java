@@ -118,10 +118,6 @@ public class FeedController {
     public BaseResponse<List<FeedVO>> getAll(){
         List<FeedVO> feedVOList = feedManagementService.getAll();
         return ResultUtils.success(feedVOList);
-
     }
-
-
-
 
 }

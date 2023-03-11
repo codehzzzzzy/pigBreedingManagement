@@ -1,16 +1,20 @@
 package com.hzzzzzy.project.common;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.util.MapUtils;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.alibaba.excel.write.metadata.style.WriteCellStyle;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
+import com.google.gson.Gson;
 import com.hzzzzzy.project.exception.BusinessException;
 import com.hzzzzzy.project.model.dto.pig.PigExcel;
+import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -20,6 +24,7 @@ import java.util.UUID;
  * @author hzzzzzy
  */
 public class ExcelUtils {
+    @SneakyThrows
     public static ExcelWriterSheetBuilder export(HttpServletResponse response){
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
@@ -38,6 +43,15 @@ public class ExcelUtils {
             ExcelWriterSheetBuilder sheetBuilder = EasyExcel.write(response.getOutputStream(), PigExcel.class).sheet("sheet").registerWriteHandler(horizontalCellStyleStrategy);
             return sheetBuilder;
         } catch (IOException e) {
+            // 重置response
+            response.reset();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            Map<String, String> map = MapUtils.newHashMap();
+            map.put("status", "failure");
+            map.put("message", "下载文件失败" + e.getMessage());
+            Gson gson = new Gson();
+            response.getWriter().println(gson.toJson(map));
             throw new BusinessException(ErrorCode.SYSTEM_ERROR);
         }
     }
