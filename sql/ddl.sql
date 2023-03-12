@@ -37,7 +37,7 @@ CREATE TABLE feed_management (
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='饲料管理';
 
 -- 猪只进出库管理表
-CREATE TABLE pig_in_out (
+CREATE TABLE pig_inventory (
     id INT AUTO_INCREMENT PRIMARY KEY COMMENT '进出记录id 主键',
     pig_id INT COMMENT '猪只id',
     hogring_id INT COMMENT '进入猪舍id',

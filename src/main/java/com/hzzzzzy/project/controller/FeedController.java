@@ -59,7 +59,6 @@ public class FeedController {
      * 导出excel
      *
      * @param response
-     * @throws Exception
      */
     @RequestMapping("/export")
     public BaseResponse<Boolean> exportExcel(HttpServletResponse response){

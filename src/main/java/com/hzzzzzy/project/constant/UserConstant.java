@@ -39,7 +39,7 @@ public interface UserConstant {
      *
      * @return
      */
-    Integer IN_AND_OUT_ADMIN = 4;
+    Integer PIG_INVENTORY_ADMIN = 4;
 
 
     /**

@@ -16,6 +16,8 @@ import com.hzzzzzy.project.service.HogringService;
 import com.hzzzzzy.project.service.PigService;
 import com.hzzzzzy.project.service.UserService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,9 +38,10 @@ import static com.hzzzzzy.project.constant.UserConstant.*;
 @Service
 public class HogringServiceImpl extends ServiceImpl<HogringMapper, Hogring>
     implements HogringService {
-    @Resource
+    @Autowired
     private UserService userService;
-    @Resource
+    @Lazy
+    @Autowired
     private PigService pigService;
     /**
      * 判断是否为当前模块管理员

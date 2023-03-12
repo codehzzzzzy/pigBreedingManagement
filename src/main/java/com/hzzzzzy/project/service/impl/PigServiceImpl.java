@@ -22,6 +22,8 @@ import com.hzzzzzy.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -46,9 +48,10 @@ import static com.hzzzzzy.project.constant.UserConstant.PIG_ADMIN;
 @Slf4j
 public class PigServiceImpl extends ServiceImpl<PigMapper, Pig>
     implements PigService {
-    @Resource
+    @Autowired
     private UserService userService;
-    @Resource
+    @Lazy
+    @Autowired
     private HogringService hogringService;
     /**
      * 判断是否为当前模块管理员
