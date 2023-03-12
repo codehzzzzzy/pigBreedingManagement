@@ -4,7 +4,11 @@ import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryAddBatchRequest;
 import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryAddRequest;
+import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryDeleteRequest;
+import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryUpdateRequest;
 import com.hzzzzzy.project.model.entity.PigInventory;
+import com.hzzzzzy.project.model.vo.PigInventoryGetOneVO;
+import com.hzzzzzy.project.model.vo.PigInventoryVO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,4 +49,41 @@ public interface PigInventoryService extends IService<PigInventory> {
      * @return
      */
     boolean export(HttpServletResponse response, ExcelWriterSheetBuilder sheetBuilder);
+
+
+    /**
+     * 肉猪进出库管理员 更新 肉猪进出信息
+     *
+     * @param pigInventoryUpdateRequest
+     * @param request
+     * @return
+     */
+    boolean update(PigInventoryUpdateRequest pigInventoryUpdateRequest, HttpServletRequest request);
+
+
+    /**
+     * 肉猪进出库管理员 删除 肉猪进出信息
+     *
+     * @param pigInventoryDeleteRequest
+     * @param request
+     * @return
+     */
+    boolean delete(PigInventoryDeleteRequest pigInventoryDeleteRequest, HttpServletRequest request);
+
+    /**
+     * 获取肉猪进出的详细信息
+     *
+     * @param id
+     * @return
+     */
+    PigInventoryGetOneVO getDetailById(int id);
+
+
+    /**
+     * 获取所有肉猪进出库信息列表
+     *
+     * @return
+     */
+    List<PigInventoryVO> getAll();
+
 }

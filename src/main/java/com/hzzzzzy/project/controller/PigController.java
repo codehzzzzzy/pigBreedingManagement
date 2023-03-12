@@ -129,7 +129,7 @@ public class PigController {
 
 
     /**
-     * 获取所有肉猪详细信息列表
+     * 获取所有肉猪信息列表
      *
      * @return
      */

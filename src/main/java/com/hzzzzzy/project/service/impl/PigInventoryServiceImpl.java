@@ -2,17 +2,22 @@ package com.hzzzzzy.project.service.impl;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.gson.Gson;
+import com.hzzzzzy.project.common.BaseResponse;
 import com.hzzzzzy.project.common.ErrorCode;
+import com.hzzzzzy.project.common.ResultUtils;
 import com.hzzzzzy.project.exception.BusinessException;
 import com.hzzzzzy.project.mapper.PigInventoryMapper;
-import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryAddBatchAuxiliary;
-import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryAddBatchRequest;
-import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryAddRequest;
-import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryExcel;
+import com.hzzzzzy.project.model.dto.PigInventory.*;
+import com.hzzzzzy.project.model.dto.hogring.HogringDeleteRequest;
 import com.hzzzzzy.project.model.dto.pig.PigExcel;
 import com.hzzzzzy.project.model.entity.Hogring;
 import com.hzzzzzy.project.model.entity.Pig;
 import com.hzzzzzy.project.model.entity.PigInventory;
+import com.hzzzzzy.project.model.vo.PigDetailVO;
+import com.hzzzzzy.project.model.vo.PigInventoryGetOneVO;
+import com.hzzzzzy.project.model.vo.PigInventoryVO;
+import com.hzzzzzy.project.model.vo.PigVO;
 import com.hzzzzzy.project.service.HogringService;
 import com.hzzzzzy.project.service.PigInventoryService;
 import com.hzzzzzy.project.service.PigService;
@@ -20,8 +25,11 @@ import com.hzzzzzy.project.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -160,6 +168,102 @@ public class PigInventoryServiceImpl extends ServiceImpl<PigInventoryMapper, Pig
     }
 
 
+    /**
+     * 肉猪进出库管理员 更新 肉猪进出信息
+     *
+     * @param pigInventoryUpdateRequest
+     * @param request
+     * @return
+     */
+    @Override
+    public boolean update(PigInventoryUpdateRequest pigInventoryUpdateRequest, HttpServletRequest request) {
+        //判断是否为当前模块管理员
+        if (!isAdmin(request)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR);
+        }
+        if (pigInventoryUpdateRequest == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数为空");
+        }
+        PigInventory pigInventory = new PigInventory();
+        BeanUtils.copyProperties(pigInventoryUpdateRequest,pigInventory);
+        boolean flag = this.save(pigInventory);
+        if (!flag){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"更新信息失败");
+        }
+        return flag;
+    }
+
+
+    /**
+     * 肉猪进出库管理员 删除 肉猪进出信息
+     *
+     * @param pigInventoryDeleteRequest
+     * @param request
+     * @return
+     */
+    @Override
+    public boolean delete(PigInventoryDeleteRequest pigInventoryDeleteRequest, HttpServletRequest request) {
+        //判断是否为当前模块管理员
+        if (!isAdmin(request)){
+            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR);
+        }
+        if (pigInventoryDeleteRequest == null || pigInventoryDeleteRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        boolean flag = this.removeById(pigInventoryDeleteRequest.getId());
+        if (!flag){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"删除失败");
+        }
+        return flag;
+    }
+
+
+    /**
+     * 获取肉猪进出的详细信息
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public PigInventoryGetOneVO getDetailById(int id) {
+        if (id <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        PigInventoryGetOneVO pigInventoryGetOneVO = new PigInventoryGetOneVO();
+        PigInventory pigInventory = this.getById(id);
+        if (pigInventory == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        Integer pigId = pigInventory.getPigId();
+        Pig pig = pigService.getById(pigId);
+        if (pig == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"该id对应的肉猪不存在");
+        }
+        BeanUtils.copyProperties(pigInventory,pigInventoryGetOneVO);
+        BeanUtils.copyProperties(pig,pigInventoryGetOneVO);
+        return pigInventoryGetOneVO;
+    }
+
+
+    /**
+     * 获取所有肉猪进出库信息列表
+     *
+     * @return
+     */
+    @Override
+    public List<PigInventoryVO> getAll() {
+        List<PigInventory> pigInventoryList = this.list();
+        if (pigInventoryList == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        List<PigInventoryVO> pigInventoryVOList = new ArrayList<>();
+        pigInventoryList.forEach((PigInventory pigInventory)->{
+            PigInventoryVO pigInventoryVO = new PigInventoryVO();
+            BeanUtils.copyProperties(pigInventory,pigInventoryVO);
+            pigInventoryVOList.add(pigInventoryVO);
+        });
+        return pigInventoryVOList;
+    }
 
 
 }
