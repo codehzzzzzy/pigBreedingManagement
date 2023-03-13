@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -27,12 +28,12 @@ public class PigInventoryVO {
     /**
      * 进入时间
      */
-    private Date inTime;
+    private LocalDate inTime;
 
     /**
      * 出库时间
      */
-    private Date outTime;
+    private LocalDate outTime;
 
     /**
      * 猪只来源

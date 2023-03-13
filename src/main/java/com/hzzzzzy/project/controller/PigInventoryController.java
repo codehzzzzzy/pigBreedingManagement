@@ -9,7 +9,6 @@ import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryAddBatchRequest;
 import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryAddRequest;
 import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryDeleteRequest;
 import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryUpdateRequest;
-import com.hzzzzzy.project.model.dto.feed.FeedUpdateRequest;
 import com.hzzzzzy.project.model.vo.PigInventoryGetOneVO;
 import com.hzzzzzy.project.model.vo.PigInventoryVO;
 import com.hzzzzzy.project.service.PigInventoryService;

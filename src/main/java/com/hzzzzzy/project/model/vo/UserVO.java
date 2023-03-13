@@ -2,6 +2,7 @@ package com.hzzzzzy.project.model.vo;
 
 import lombok.Data;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -23,12 +24,12 @@ public class UserVO implements Serializable {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private LocalDate createTime;
 
     /**
      * 更新时间
      */
-    private Date updateTime;
+    private LocalDate updateTime;
 
 
     /**

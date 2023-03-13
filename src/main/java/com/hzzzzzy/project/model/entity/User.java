@@ -3,6 +3,7 @@ package com.hzzzzzy.project.model.entity;
 import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import lombok.Data;
 
@@ -32,12 +33,12 @@ public class User implements Serializable {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private LocalDate createTime;
 
     /**
      * 更新时间
      */
-    private Date updateTime;
+    private LocalDate updateTime;
 
     /**
      * 是否删除(0.不删除;1.删除)

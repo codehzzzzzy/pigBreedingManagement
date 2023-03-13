@@ -1,6 +1,8 @@
 package com.hzzzzzy.project.model.dto.PigInventory;
 import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.Data;
+
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -32,13 +34,13 @@ public class PigInventoryExcel{
      * 进入时间
      */
     @ExcelProperty("进入时间")
-    private Date inTime;
+    private LocalDate inTime;
 
     /**
      * 出库时间
      */
     @ExcelProperty("出库时间")
-    private Date outTime;
+    private LocalDate outTime;
 
     /**
      * 猪只来源

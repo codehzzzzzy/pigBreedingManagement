@@ -3,6 +3,7 @@ package com.hzzzzzy.project.model.dto.PigInventory;
 
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -27,12 +28,12 @@ public class PigInventoryAddBatchRequest {
     /**
      * 进入时间
      */
-    private Date inTime;
+    private LocalDate inTime;
 
     /**
      * 出库时间
      */
-    private Date outTime;
+    private LocalDate outTime;
 
     /**
      * 猪只来源

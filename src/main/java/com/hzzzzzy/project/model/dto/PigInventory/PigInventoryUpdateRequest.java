@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -30,12 +31,12 @@ public class PigInventoryUpdateRequest{
     /**
      * 进入时间
      */
-    private Date inTime;
+    private LocalDate inTime;
 
     /**
      * 出库时间
      */
-    private Date outTime;
+    private LocalDate outTime;
 
     /**
      * 猪只来源
