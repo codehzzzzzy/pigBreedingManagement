@@ -1,11 +1,13 @@
 package com.hzzzzzy.project.service;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hzzzzzy.project.model.dto.hogring.HogringAddRequest;
 import com.hzzzzzy.project.model.dto.hogring.HogringDeleteRequest;
 import com.hzzzzzy.project.model.dto.hogring.HogringUpdateRequest;
 import com.hzzzzzy.project.model.dto.hogring.PigIdListGetRequest;
 import com.hzzzzzy.project.model.entity.Hogring;
+import com.hzzzzzy.project.model.vo.HoringVO;
 import com.hzzzzzy.project.model.vo.PigInHoringVO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,4 +67,13 @@ public interface HogringService extends IService<Hogring> {
      * @param request
      */
     List<PigInHoringVO> getPigList(PigIdListGetRequest pigIdListGetRequest, HttpServletRequest request);
+
+
+    /**
+     * 分页获取所有猪舍信息
+     *
+     * @param current
+     * @param size
+     */
+    Page<HoringVO> getAll(long current, long size);
 }

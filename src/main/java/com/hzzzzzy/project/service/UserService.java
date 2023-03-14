@@ -1,13 +1,17 @@
 package com.hzzzzzy.project.service;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hzzzzzy.project.model.dto.user.UserDeleteRequest;
 import com.hzzzzzy.project.model.dto.user.UserAddRequest;
+import com.hzzzzzy.project.model.dto.user.UserQueryRequest;
 import com.hzzzzzy.project.model.dto.user.UserUpdateRequest;
 import com.hzzzzzy.project.model.entity.User;
+import com.hzzzzzy.project.model.vo.UserVO;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 用户服务
@@ -80,4 +84,23 @@ public interface UserService extends IService<User> {
      * @return
      */
     boolean update(UserUpdateRequest userUpdateRequest, HttpServletRequest request);
+
+
+    /**
+     * 分页获取管理员列表
+     *
+     * @param userQueryRequest
+     * @param current
+     * @param size
+     * @return
+     */
+    Page<UserVO> getAll(UserQueryRequest userQueryRequest, long current, long size);
+
+
+    /**
+     * 获取管理员列表
+     *
+     * @param userQueryRequest
+     */
+    List<UserVO> listUser(UserQueryRequest userQueryRequest);
 }

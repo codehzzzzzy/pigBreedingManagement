@@ -172,17 +172,7 @@ public class UserController {
      */
     @GetMapping("/list")
     public BaseResponse<List<UserVO>> listUser(UserQueryRequest userQueryRequest, HttpServletRequest request) {
-        User userQuery = new User();
-        if (userQueryRequest != null) {
-            BeanUtils.copyProperties(userQueryRequest, userQuery);
-        }
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
-        List<User> userList = userService.list(queryWrapper);
-        List<UserVO> userVOList = userList.stream().map(user -> {
-            UserVO userVO = new UserVO();
-            BeanUtils.copyProperties(user, userVO);
-            return userVO;
-        }).collect(Collectors.toList());
+        List<UserVO> userVOList = userService.listUser(userQueryRequest);
         return ResultUtils.success(userVOList);
     }
 
@@ -195,26 +185,10 @@ public class UserController {
      */
     @GetMapping("/list/page/{current}/{size}")
     public BaseResponse<Page<UserVO>> listUserByPage(UserQueryRequest userQueryRequest,@PathVariable long current,@PathVariable long size) {
-        User userQuery = new User();
-        if (userQueryRequest != null) {
-            BeanUtils.copyProperties(userQueryRequest, userQuery);
-            current = userQueryRequest.getCurrent();
-            size = userQueryRequest.getPageSize();
+        Page<UserVO> page = userService.getAll(userQueryRequest, current, size);
+        if (page == null){
+            return new BaseResponse<>(ErrorCode.NOT_FOUND_ERROR);
         }
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
-        // 使用Mybatis-plus的分页插件 https://baomidou.com/pages/97710a/#page
-        Page<User> userPage = userService.page(new Page<>(current, size), queryWrapper);
-        // 创建PageDTO，存入当前页数，每页显示条数，总条数
-        Page<UserVO> userVOPage = new PageDTO<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
-        // getRecords: 获取查询数据列表
-        // 此处使用java8中的stream流 具体看https://www.hzzzzzy.icu/2022/08/31/Stream%E6%B5%81/
-        List<UserVO> userVOList = userPage.getRecords().stream().map(user -> {
-            UserVO userVO = new UserVO();
-            BeanUtils.copyProperties(user, userVO);
-            return userVO;
-        }).collect(Collectors.toList());
-        // setRecords: 设置查询的数据列表
-        userVOPage.setRecords(userVOList);
-        return ResultUtils.success(userVOPage);
+        return ResultUtils.success(page);
     }
 }

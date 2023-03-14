@@ -1,6 +1,7 @@
 package com.hzzzzzy.project.service;
 
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryAddBatchRequest;
 import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryAddRequest;
@@ -9,6 +10,7 @@ import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryUpdateRequest;
 import com.hzzzzzy.project.model.entity.PigInventory;
 import com.hzzzzzy.project.model.vo.PigInventoryGetOneVO;
 import com.hzzzzzy.project.model.vo.PigInventoryVO;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -80,10 +82,12 @@ public interface PigInventoryService extends IService<PigInventory> {
 
 
     /**
-     * 获取所有肉猪进出库信息列表
+     * 分页获取所有肉猪进出库信息列表
      *
+     * @param current
+     * @param size
      * @return
      */
-    List<PigInventoryVO> getAll();
+    Page<PigInventoryVO> getAll(long current, long size);
 
 }

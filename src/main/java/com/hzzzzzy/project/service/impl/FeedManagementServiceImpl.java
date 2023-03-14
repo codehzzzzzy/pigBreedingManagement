@@ -1,6 +1,8 @@
 package com.hzzzzzy.project.service.impl;
 
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hzzzzzy.project.common.BaseResponse;
 import com.hzzzzzy.project.common.ErrorCode;
@@ -25,6 +27,7 @@ import com.hzzzzzy.project.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -33,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.hzzzzzy.project.constant.UserConstant.*;
 
@@ -190,22 +194,28 @@ public class FeedManagementServiceImpl extends ServiceImpl<FeedManagementMapper,
 
 
     /**
-     * 获取所有饲料的粗略信息
+     * 分页获取所有饲料的粗略信息
      *
+     * @param current
+     * @param size
+     * @return
      */
     @Override
-    public List<FeedVO> getAll() {
-        List<FeedManagement> feedManagementList = this.list();
-        if (feedManagementList == null){
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-        }
-        List<FeedVO> feedVOList = new ArrayList<>();
-        feedManagementList.forEach((FeedManagement feedManagement) -> {
+    public Page<FeedVO> getAll(long current, long size) {
+        Page<FeedManagement> pageInfo = new Page<>(current, size);
+        Page<FeedVO> dtoPage = new Page<>();
+        QueryWrapper<FeedManagement> queryWrapper = new QueryWrapper<>();
+        this.page(pageInfo,queryWrapper);
+
+        BeanUtils.copyProperties(pageInfo,dtoPage,"records");
+
+        List<FeedVO> feedVOList = pageInfo.getRecords().stream().map(item -> {
             FeedVO feedVO = new FeedVO();
-            BeanUtils.copyProperties(feedManagement,feedVO);
-            feedVOList.add(feedVO);
-        });
-        return feedVOList;
+            BeanUtils.copyProperties(item, feedVO);
+            return feedVO;
+        }).collect(Collectors.toList());
+        dtoPage.setRecords(feedVOList);
+        return dtoPage;
     }
 }
 

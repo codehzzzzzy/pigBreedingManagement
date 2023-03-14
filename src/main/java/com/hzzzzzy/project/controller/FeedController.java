@@ -2,6 +2,7 @@ package com.hzzzzzy.project.controller;
 
 
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hzzzzzy.project.common.BaseResponse;
 import com.hzzzzzy.project.common.ErrorCode;
 import com.hzzzzzy.project.common.ExcelUtils;
@@ -109,14 +110,17 @@ public class FeedController {
 
 
     /**
-     * 获取所有饲料的粗略信息
+     * 分页获取所有饲料的粗略信息
      *
      * @return
      */
-    @GetMapping("/getAll")
-    public BaseResponse<List<FeedVO>> getAll(){
-        List<FeedVO> feedVOList = feedManagementService.getAll();
-        return ResultUtils.success(feedVOList);
+    @GetMapping("/getAll/{current}/{size}")
+    public BaseResponse<Page<FeedVO>> getAll(@PathVariable long current, @PathVariable long size){
+        Page<FeedVO> page= feedManagementService.getAll(current,size);
+        if (page == null){
+            return new BaseResponse<>(ErrorCode.NOT_FOUND_ERROR);
+        }
+        return ResultUtils.success(page);
     }
 
 }

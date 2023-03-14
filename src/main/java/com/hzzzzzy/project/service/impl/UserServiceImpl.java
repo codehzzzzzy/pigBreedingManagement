@@ -1,15 +1,20 @@
 package com.hzzzzzy.project.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hzzzzzy.project.common.ResultUtils;
 import com.hzzzzzy.project.model.dto.user.UserDeleteRequest;
 import com.hzzzzzy.project.common.ErrorCode;
 import com.hzzzzzy.project.constant.UserConstant;
 import com.hzzzzzy.project.exception.BusinessException;
 import com.hzzzzzy.project.mapper.UserMapper;
 import com.hzzzzzy.project.model.dto.user.UserAddRequest;
+import com.hzzzzzy.project.model.dto.user.UserQueryRequest;
 import com.hzzzzzy.project.model.dto.user.UserUpdateRequest;
 import com.hzzzzzy.project.model.entity.User;
+import com.hzzzzzy.project.model.vo.UserVO;
 import com.hzzzzzy.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -255,6 +262,62 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         BeanUtils.copyProperties(userUpdateRequest, user);
         boolean result = this.updateById(user);
         return result;
+    }
+
+
+    /**
+     * 分页获取管理员列表
+     *
+     * @param userQueryRequest
+     * @param current
+     * @param size
+     * @return
+     */
+    @Override
+    public Page<UserVO> getAll(UserQueryRequest userQueryRequest, long current, long size) {
+        User userQuery = new User();
+        if (userQueryRequest != null) {
+            BeanUtils.copyProperties(userQueryRequest, userQuery);
+            current = userQueryRequest.getCurrent();
+            size = userQueryRequest.getPageSize();
+        }
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
+        // 使用Mybatis-plus的分页插件 https://baomidou.com/pages/97710a/#page
+        Page<User> userPage = this.page(new Page<>(current, size), queryWrapper);
+        // 创建PageDTO，存入当前页数，每页显示条数，总条数
+        Page<UserVO> userVOPage = new PageDTO<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
+        // getRecords: 获取查询数据列表
+        // 此处使用java8中的stream流 具体看https://www.hzzzzzy.icu/2022/08/31/Stream%E6%B5%81/
+        List<UserVO> userVOList = userPage.getRecords().stream().map(user -> {
+            UserVO userVO = new UserVO();
+            BeanUtils.copyProperties(user, userVO);
+            return userVO;
+        }).collect(Collectors.toList());
+        userVOPage.setRecords(userVOList);
+        return userVOPage;
+    }
+
+
+    /**
+     * 获取管理员列表
+     *
+     * @param userQueryRequest
+     * @return
+     */
+    @Override
+    public List<UserVO> listUser(UserQueryRequest userQueryRequest) {
+        User userQuery = new User();
+        if (userQueryRequest != null) {
+            BeanUtils.copyProperties(userQueryRequest, userQuery);
+        }
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
+        List<User> userList = this.list(queryWrapper);
+        List<UserVO> userVOList = userList.stream().map(user -> {
+            UserVO userVO = new UserVO();
+            BeanUtils.copyProperties(user, userVO);
+            return userVO;
+        }).collect(Collectors.toList());
+        return userVOList;
     }
 }
 

@@ -1,5 +1,6 @@
 package com.hzzzzzy.project.controller;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hzzzzzy.project.common.BaseResponse;
 import com.hzzzzzy.project.common.ErrorCode;
 import com.hzzzzzy.project.common.ExcelUtils;
@@ -116,13 +117,15 @@ public class PigInventoryController {
 
 
     /**
-     * 获取所有肉猪进出库信息列表
+     * 分页获取所有肉猪进出库信息列表
      *
+     * @param current
+     * @param size
      * @return
      */
-    @GetMapping("/getAll")
-    public BaseResponse<List<PigInventoryVO>> getAll(){
-        List<PigInventoryVO> pigInventoryVOList = pigInventoryService.getAll();
+    @GetMapping("/getAll/{current}/{size}")
+    public BaseResponse<Page<PigInventoryVO>> getAll(@PathVariable long current, @PathVariable long size){
+        Page<PigInventoryVO> pigInventoryVOList = pigInventoryService.getAll(current,size);
         return ResultUtils.success(pigInventoryVOList);
     }
 

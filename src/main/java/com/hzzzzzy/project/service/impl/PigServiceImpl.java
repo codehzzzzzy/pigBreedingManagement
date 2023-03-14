@@ -247,10 +247,9 @@ public class PigServiceImpl extends ServiceImpl<PigMapper, Pig>
         this.page(pageInfo,queryWrapper);
         // 对象拷贝
         BeanUtils.copyProperties(pageInfo,dtoPage,"records");
-
-        List<PigVO> pigVOList = pageInfo.getRecords().stream().map((item) -> {
+        List<PigVO> pigVOList = pageInfo.getRecords().stream().map((pig) -> {
             PigVO pigVO = new PigVO();
-            BeanUtils.copyProperties(item, pigVO);
+            BeanUtils.copyProperties(pig, pigVO);
             return pigVO;
         }).collect(Collectors.toList());
         dtoPage.setRecords(pigVOList);

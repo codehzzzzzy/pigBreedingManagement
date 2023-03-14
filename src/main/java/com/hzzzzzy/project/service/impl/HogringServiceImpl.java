@@ -1,9 +1,12 @@
 package com.hzzzzzy.project.service.impl;
 
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
 import com.hzzzzzy.project.common.ErrorCode;
+import com.hzzzzzy.project.common.ResultUtils;
 import com.hzzzzzy.project.exception.BusinessException;
 import com.hzzzzzy.project.mapper.HogringMapper;
 import com.hzzzzzy.project.model.dto.hogring.*;
@@ -11,6 +14,7 @@ import com.hzzzzzy.project.model.dto.pig.PigExcel;
 import com.hzzzzzy.project.model.entity.Hogring;
 import com.hzzzzzy.project.model.entity.Pig;
 import com.hzzzzzy.project.model.entity.User;
+import com.hzzzzzy.project.model.vo.HoringVO;
 import com.hzzzzzy.project.model.vo.PigInHoringVO;
 import com.hzzzzzy.project.service.HogringService;
 import com.hzzzzzy.project.service.PigService;
@@ -27,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.hzzzzzy.project.constant.UserConstant.*;
 
@@ -199,6 +204,31 @@ public class HogringServiceImpl extends ServiceImpl<HogringMapper, Hogring>
             pigInHoringVOList.add(pigInHoringVO);
         });
         return pigInHoringVOList;
+    }
+
+
+    /**
+     * 分页获取所有猪舍信息
+     *
+     * @param current
+     * @param size
+     * @return
+     */
+    @Override
+    public Page<HoringVO> getAll(long current, long size) {
+        // 创建分页构造器对象
+        Page<Hogring> pageInfo = new Page<>(current,size);
+        Page<HoringVO> dtoPage = new Page<>();
+        QueryWrapper<Hogring> queryWrapper = new QueryWrapper<>();
+        this.page(pageInfo, queryWrapper);
+        BeanUtils.copyProperties(pageInfo,dtoPage,"records");
+        List<HoringVO> horingVOList = pageInfo.getRecords().stream().map(item -> {
+            HoringVO horingVO = new HoringVO();
+            BeanUtils.copyProperties(item, horingVO);
+            return horingVO;
+        }).collect(Collectors.toList());
+        dtoPage.setRecords(horingVOList);
+        return dtoPage;
     }
 
 

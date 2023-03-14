@@ -1,6 +1,7 @@
 package com.hzzzzzy.project.service.impl;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
 import com.hzzzzzy.project.common.BaseResponse;
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.hzzzzzy.project.constant.UserConstant.*;
 
@@ -246,23 +248,29 @@ public class PigInventoryServiceImpl extends ServiceImpl<PigInventoryMapper, Pig
 
 
     /**
-     * 获取所有肉猪进出库信息列表
+     * 分页获取所有肉猪进出库信息列表
      *
+     * @param current
+     * @param size
      * @return
      */
     @Override
-    public List<PigInventoryVO> getAll() {
-        List<PigInventory> pigInventoryList = this.list();
-        if (pigInventoryList == null){
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-        }
-        List<PigInventoryVO> pigInventoryVOList = new ArrayList<>();
-        pigInventoryList.forEach((PigInventory pigInventory)->{
+    public Page<PigInventoryVO> getAll(long current, long size) {
+        // 创建分页构造器对象
+        Page<PigInventory> pageInfo = new Page<>(current,size);
+        Page<PigInventoryVO> dtoPage = new Page<>();
+        QueryWrapper<PigInventory> queryWrapper = new QueryWrapper<>();
+        this.page(pageInfo,queryWrapper);
+
+        // 拷贝对象
+        BeanUtils.copyProperties(pageInfo,dtoPage,"records");
+        List<PigInventoryVO> pigInventoryVOList = pageInfo.getRecords().stream().map((PigInventory pigInventory) -> {
             PigInventoryVO pigInventoryVO = new PigInventoryVO();
-            BeanUtils.copyProperties(pigInventory,pigInventoryVO);
-            pigInventoryVOList.add(pigInventoryVO);
-        });
-        return pigInventoryVOList;
+            BeanUtils.copyProperties(pigInventory, pigInventoryVO);
+            return pigInventoryVO;
+        }).collect(Collectors.toList());
+        dtoPage.setRecords(pigInventoryVOList);
+        return dtoPage;
     }
 
 

@@ -1,5 +1,7 @@
 package com.hzzzzzy.project.controller;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hzzzzzy.project.common.BaseResponse;
 import com.hzzzzzy.project.common.ErrorCode;
 import com.hzzzzzy.project.common.ExcelUtils;
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 猪舍管理接口
@@ -131,23 +134,19 @@ public class HogringController {
 
 
     /**
-     * 获取所有猪舍信息
+     * 分页获取所有猪舍信息
      *
+     * @param current
+     * @param size
      * @return
      */
-    @GetMapping("/getAll")
-    public BaseResponse<List<HoringVO>> getAll(){
-        List<Hogring> hogringList = hogringService.list();
-        if (hogringList == null){
+    @GetMapping("/getAll/{current}/{size}")
+    public BaseResponse<Page<HoringVO>> getAll(@PathVariable long current, @PathVariable long size){
+        Page<HoringVO> page = hogringService.getAll(current, size);
+        if (page == null){
             return new BaseResponse<>(ErrorCode.NOT_FOUND_ERROR);
         }
-        List<HoringVO> horingVOArrayList = new ArrayList<>();
-        hogringList.forEach((Hogring hogring) -> {
-            HoringVO horingVO = new HoringVO();
-            BeanUtils.copyProperties(hogring,horingVO);
-            horingVOArrayList.add(horingVO);
-        });
-        return ResultUtils.success(horingVOArrayList);
+        return ResultUtils.success(page);
     }
 
 
