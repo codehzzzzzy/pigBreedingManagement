@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 @Service
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+    // 利用框架，自动注入(创建)userMapper
     @Autowired
     private UserMapper userMapper;
 
@@ -52,12 +53,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (StringUtils.isAnyBlank(account, pwd, checkPwd)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
+        // 账号长度是否小于4位
         if (account.length() < 4) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
         }
+        // 密码和校验密码是否小于8位
         if (pwd.length() < 8 || checkPwd.length() < 8) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
         }
+        // 管理员类型是否正确
         if (!(type>=1 && type <=5)){
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "管理员类型错误");
         }
@@ -73,14 +77,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             if (count > 0) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
             }
-            // 加密
+            // 使用md5进行加密
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + pwd).getBytes());
             // 插入数据
             User user = new User();
             user.setAccount(account);
             user.setPwd(encryptPassword);
             user.setType(type);
+            //this.save(操作数据库): 使用userService的save方法，将user保存进数据库
             boolean saveResult = this.save(user);
+            //如果保存结果不为true，抛出业务异常 BusinessException
             if (!saveResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
             }
@@ -111,10 +117,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         // 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + pwd).getBytes());
-        // 查询用户是否存在
+        /**
+         * 查询用户是否存在
+         * QueryWrapper代表是一个查询类
+         * eq("account", account)表示数据库中的account字段和 前端传到后端的account数据一样 才能查询到
+         *
+         * userMapper.selectOne 表示查询一个对象
+         */
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("account", account);
-        queryWrapper.eq("pwd", encryptPassword);
+        queryWrapper
+                .eq("account", account)
+                .eq("pwd", encryptPassword);
         User user = userMapper.selectOne(queryWrapper);
         // 用户不存在
         if (user == null) {
@@ -135,13 +148,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public User getLoginUser(HttpServletRequest request) {
-        // 先判断是否已登录
+        // 通过之前设置的登录态判断是否已经登录
         Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
         User currentUser = (User) userObj;
+        //如果未登录，抛出异常
         if (currentUser == null || currentUser.getId() == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
-        // 从数据库查询（追求性能可以直接走缓存）
+        // this.getById: 从数据库查询
         long userId = currentUser.getId();
         currentUser = this.getById(userId);
         if (currentUser == null) {
@@ -158,6 +172,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public boolean userLogout(HttpServletRequest request) {
+        // 检验登录态是否存在
         if (request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE) == null) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "未登录");
         }
@@ -176,12 +191,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public long add(UserAddRequest userAddRequest, HttpServletRequest request) {
         User user = new User();
-        //判断当前角色是否为总管理员
+        // 判断当前角色是否为总管理员
         User loginUser = getLoginUser(request);
         if (loginUser.getType() != UserConstant.GENERAL_ADMIN){
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
+        // BeanUtils.copyProperties(A,B) 表示将A对象中的数据复制到B
         BeanUtils.copyProperties(userAddRequest, user);
+        // this.save 表示将user对象保存再数据库中
         boolean result = this.save(user);
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
@@ -199,14 +216,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public boolean delete(UserDeleteRequest userDeleteRequest, HttpServletRequest request) {
-        //判断当前角色是否为总管理员
+        // 判断当前角色是否为总管理员
         User loginUser = getLoginUser(request);
         if (loginUser.getType() != UserConstant.GENERAL_ADMIN) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
+        // 判断前端传过来的数据是否为空
         if (userDeleteRequest == null || userDeleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        // this.removeById 表示将id对应的user对象 在数据库中删除
         boolean flag = this.removeById(userDeleteRequest.getId());
         return flag;
     }
@@ -226,10 +245,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (loginUser.getType() != UserConstant.GENERAL_ADMIN) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
+        // 判断前端传过来的数据是否为空
         if (userUpdateRequest == null || userUpdateRequest.getId() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        // 创建需要存进数据库中的user对象
         User user = new User();
+        // 将userUpdateRequest对象中的内容拷贝到user中，如何将user通过updateById存进数据库中
         BeanUtils.copyProperties(userUpdateRequest, user);
         boolean result = this.updateById(user);
         return result;

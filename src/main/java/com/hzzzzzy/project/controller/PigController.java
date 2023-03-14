@@ -1,5 +1,6 @@
 package com.hzzzzzy.project.controller;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hzzzzzy.project.common.BaseResponse;
 import com.hzzzzzy.project.common.ErrorCode;
 import com.hzzzzzy.project.common.ExcelUtils;
@@ -47,8 +48,8 @@ public class PigController {
      * @return
      */
     @GetMapping("/searchBy")
-    public BaseResponse<List<Pig>> searchBy(Integer id, String breed, Integer age, Integer gender, Integer health, Integer status, BigDecimal weight_pre, BigDecimal weight_suf, String feedType){
-        List<Pig> pigList = pigService.searchBy(id, breed, age, gender, health, status, weight_pre, weight_suf,feedType);
+    public BaseResponse<List<PigVO>> searchBy(Integer id, String breed, Integer age, Integer gender, Integer health, Integer status, BigDecimal weight_pre, BigDecimal weight_suf, String feedType){
+        List<PigVO> pigList = pigService.searchBy(id, breed, age, gender, health, status, weight_pre, weight_suf,feedType);
         if (pigList==null){
             return new BaseResponse<>(ErrorCode.NOT_FOUND_ERROR);
         }
@@ -129,13 +130,13 @@ public class PigController {
 
 
     /**
-     * 获取所有肉猪信息列表
+     * 分页获取所有肉猪信息列表
      *
      * @return
      */
-    @GetMapping("/getAll")
-    public BaseResponse<List<PigVO>> getAll(){
-        List<PigVO> pigVo = pigService.getAll();
+    @GetMapping("/getAll/{current}/{size}")
+    public BaseResponse<Page<PigVO>> getAll(@PathVariable long current, @PathVariable long size){
+        Page<PigVO> pigVo = pigService.getAll(current, size);
         return ResultUtils.success(pigVo);
     }
 

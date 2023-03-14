@@ -2,6 +2,9 @@ package com.hzzzzzy.project.service.impl;
 
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hzzzzzy.project.common.ErrorCode;
 import com.hzzzzzy.project.constant.UserConstant;
@@ -16,6 +19,7 @@ import com.hzzzzzy.project.model.entity.Pig;
 import com.hzzzzzy.project.model.entity.User;
 import com.hzzzzzy.project.model.vo.PigDetailVO;
 import com.hzzzzzy.project.model.vo.PigVO;
+import com.hzzzzzy.project.model.vo.UserVO;
 import com.hzzzzzy.project.service.HogringService;
 import com.hzzzzzy.project.service.PigService;
 import com.hzzzzzy.project.service.UserService;
@@ -25,6 +29,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.hzzzzzy.project.constant.PigConstant.*;
 import static com.hzzzzzy.project.constant.PigConstant.ASSIST_IN_JUDGMENT;
@@ -50,6 +56,8 @@ public class PigServiceImpl extends ServiceImpl<PigMapper, Pig>
     implements PigService {
     @Autowired
     private UserService userService;
+    //@Autowired 表示自动注入该对象
+    //@Lazy 表示延迟注入该对象 比如A中注入了B，B中注入了A，那么A，B就会循环加载，如果加上这个注解，就会在有需要的时候，再加载该对象，解决循环依赖的问题
     @Lazy
     @Autowired
     private HogringService hogringService;
@@ -129,7 +137,8 @@ public class PigServiceImpl extends ServiceImpl<PigMapper, Pig>
      * @return
      */
     @Override
-    public List<Pig> searchBy(Integer id, String breed, Integer age, Integer gender, Integer health, Integer status, BigDecimal weight_pre,BigDecimal weight_suf,String feedType) {
+    public List<PigVO> searchBy(Integer id, String breed, Integer age, Integer gender, Integer health, Integer status, BigDecimal weight_pre,BigDecimal weight_suf,String feedType) {
+
         LambdaQueryWrapper<Pig> queryWrapper = new LambdaQueryWrapper<>();
         //添加查询条件
         queryWrapper.eq(id != null,Pig::getId,id);
@@ -145,7 +154,14 @@ public class PigServiceImpl extends ServiceImpl<PigMapper, Pig>
             queryWrapper.le(weight_suf.compareTo(ASSIST_IN_JUDGMENT) > -1,Pig::getWeight,weight_suf);
         }
         queryWrapper.eq(StringUtils.isNotBlank(feedType),Pig::getFeedType,feedType);
-        return this.list(queryWrapper);
+        List<Pig> pigList = this.list(queryWrapper);
+        List<PigVO> pigVOList = new ArrayList<>();
+        pigList.forEach((Pig pig)->{
+            PigVO pigVO = new PigVO();
+            BeanUtils.copyProperties(pig,pigVO);
+            pigVOList.add(pigVO);
+        });
+        return pigVOList;
     }
 
 
@@ -218,23 +234,27 @@ public class PigServiceImpl extends ServiceImpl<PigMapper, Pig>
 
 
     /**
-     * 获取所有肉猪详细信息列表
+     * 分页获取所有肉猪详细信息列表
      *
      * @return
      */
     @Override
-    public List<PigVO> getAll() {
-        List<Pig> pigList = this.list();
-        if (pigList == null){
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-        }
-        List<PigVO> pigVOList = new ArrayList<>();
-        pigList.forEach((Pig pig)->{
+    public Page<PigVO> getAll(long current, long size) {
+        // 创建分页构造器对象
+        Page<PigVO> dtoPage = new Page<>();
+        Page<Pig> pageInfo = new Page<>(current,size);
+        QueryWrapper<Pig> queryWrapper = new QueryWrapper<>();
+        this.page(pageInfo,queryWrapper);
+        // 对象拷贝
+        BeanUtils.copyProperties(pageInfo,dtoPage,"records");
+
+        List<PigVO> pigVOList = pageInfo.getRecords().stream().map((item) -> {
             PigVO pigVO = new PigVO();
-            BeanUtils.copyProperties(pig,pigVO);
-            pigVOList.add(pigVO);
-        });
-        return pigVOList;
+            BeanUtils.copyProperties(item, pigVO);
+            return pigVO;
+        }).collect(Collectors.toList());
+        dtoPage.setRecords(pigVOList);
+        return dtoPage;
     }
 }
 

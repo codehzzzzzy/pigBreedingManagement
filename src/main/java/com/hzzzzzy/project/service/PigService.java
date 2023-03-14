@@ -1,6 +1,7 @@
 package com.hzzzzzy.project.service;
 
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hzzzzzy.project.model.dto.pig.PigAddRequest;
 import com.hzzzzzy.project.model.dto.pig.PigDeleteRequest;
@@ -8,6 +9,7 @@ import com.hzzzzzy.project.model.dto.pig.PigUpdateRequest;
 import com.hzzzzzy.project.model.entity.Pig;
 import com.hzzzzzy.project.model.vo.PigDetailVO;
 import com.hzzzzzy.project.model.vo.PigVO;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,7 +55,7 @@ public interface PigService extends IService<Pig> {
      * @param feedType
      * @return
      */
-    List<Pig> searchBy(Integer id, String breed, Integer age, Integer gender, Integer health, Integer status, BigDecimal weight_pre,BigDecimal weight_suf,String feedType);
+    List<PigVO> searchBy(Integer id, String breed, Integer age, Integer gender, Integer health, Integer status, BigDecimal weight_pre,BigDecimal weight_suf,String feedType);
 
 
     /**
@@ -84,9 +86,9 @@ public interface PigService extends IService<Pig> {
 
 
     /**
-     * 获取所有肉猪详细信息列表
+     * 分页获取所有肉猪详细信息列表
      *
      * @return
      */
-    List<PigVO> getAll();
+    Page<PigVO> getAll(long current, long size);
 }

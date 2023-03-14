@@ -202,13 +202,18 @@ public class UserController {
             size = userQueryRequest.getPageSize();
         }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
+        // 使用Mybatis-plus的分页插件 https://baomidou.com/pages/97710a/#page
         Page<User> userPage = userService.page(new Page<>(current, size), queryWrapper);
+        // 创建PageDTO，存入当前页数，每页显示条数，总条数
         Page<UserVO> userVOPage = new PageDTO<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
+        // getRecords: 获取查询数据列表
+        // 此处使用java8中的stream流 具体看https://www.hzzzzzy.icu/2022/08/31/Stream%E6%B5%81/
         List<UserVO> userVOList = userPage.getRecords().stream().map(user -> {
             UserVO userVO = new UserVO();
             BeanUtils.copyProperties(user, userVO);
             return userVO;
         }).collect(Collectors.toList());
+        // setRecords: 设置查询的数据列表
         userVOPage.setRecords(userVOList);
         return ResultUtils.success(userVOPage);
     }
