@@ -4,9 +4,9 @@ spring:
   # DataSource Config
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://43.138.200.14:3306/pig_breeding_management
-    username: root
-    password: root
+    url: jdbc:mysql://xxx:3306/pig_breeding_management
+    username: xxx
+    password: xxx
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
@@ -17,9 +17,9 @@ spring:
   # redis 配置
   redis:
     port: 6379
-    host: 43.138.200.14
+    host: xxx
     database: 0
-    password: 123456
+    password: xxx
 server:
   port: 7529
   servlet:
