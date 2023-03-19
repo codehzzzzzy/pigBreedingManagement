@@ -61,7 +61,7 @@ public class FeedController {
      *
      * @param response
      */
-    @RequestMapping("/export")
+    @GetMapping("/export")
     public BaseResponse<Boolean> exportExcel(HttpServletResponse response){
         ExcelWriterSheetBuilder sheetBuilder = ExcelUtils.export(response);
         boolean flag = feedManagementService.export(response, sheetBuilder);

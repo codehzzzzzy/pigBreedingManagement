@@ -269,18 +269,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * 分页获取管理员列表
      *
      * @param userQueryRequest
-     * @param current
-     * @param size
      * @return
      */
     @Override
-    public Page<UserVO> getAll(UserQueryRequest userQueryRequest, long current, long size) {
+    public Page<UserVO> getAll(UserQueryRequest userQueryRequest) {
         User userQuery = new User();
-        if (userQueryRequest != null) {
-            BeanUtils.copyProperties(userQueryRequest, userQuery);
-            current = userQueryRequest.getCurrent();
-            size = userQueryRequest.getPageSize();
+        if (userQueryRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        BeanUtils.copyProperties(userQueryRequest, userQuery);
+        long current = userQueryRequest.getCurrent();
+        long size = userQueryRequest.getPageSize();
         QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
         // 使用Mybatis-plus的分页插件 https://baomidou.com/pages/97710a/#page
         Page<User> userPage = this.page(new Page<>(current, size), queryWrapper);

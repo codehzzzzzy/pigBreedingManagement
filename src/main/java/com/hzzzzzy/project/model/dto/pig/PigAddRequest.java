@@ -1,5 +1,7 @@
 package com.hzzzzzy.project.model.dto.pig;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -11,6 +13,11 @@ import java.math.BigDecimal;
  */
 @Data
 public class PigAddRequest {
+    /**
+     * 猪只id
+     */
+    private Integer id;
+
     /**
      * 品种
      */

@@ -14,6 +14,10 @@ import java.util.List;
  */
 @Data
 public class HogringUpdateRequest {
+    /**
+     * 猪舍id
+     */
+    private Integer hogringId;
 
     /**
      * 猪舍面积

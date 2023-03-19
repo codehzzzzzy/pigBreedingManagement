@@ -63,7 +63,7 @@ public class HogringController {
      *
      * @param response
      */
-    @RequestMapping("/export")
+    @GetMapping("/export")
     public BaseResponse<Boolean> exportExcel(HttpServletResponse response){
         ExcelWriterSheetBuilder sheetBuilder = ExcelUtils.export(response);
         boolean flag = hogringService.export(response, sheetBuilder);
@@ -95,20 +95,6 @@ public class HogringController {
     public BaseResponse<Boolean> delete(@RequestBody HogringDeleteRequest hogringDeleteRequest, HttpServletRequest request) {
         boolean flag = hogringService.delete(hogringDeleteRequest, request);
         return ResultUtils.success(flag);
-    }
-
-
-    /**
-     * 获取猪舍内肉猪列表
-     *
-     * @param pigIdListGetRequest
-     * @param request
-     * @return
-     */
-    @GetMapping("/getPigList")
-    public BaseResponse<List<PigInHoringVO>> getPigList(@RequestBody PigIdListGetRequest pigIdListGetRequest, HttpServletRequest request){
-        List<PigInHoringVO> pigList = hogringService.getPigList(pigIdListGetRequest, request);
-        return ResultUtils.success(pigList);
     }
 
 

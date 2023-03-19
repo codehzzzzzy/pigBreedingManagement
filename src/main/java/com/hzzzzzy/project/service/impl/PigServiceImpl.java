@@ -4,10 +4,10 @@ import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hzzzzzy.project.common.ErrorCode;
-import com.hzzzzzy.project.constant.UserConstant;
 import com.hzzzzzy.project.exception.BusinessException;
 import com.hzzzzzy.project.mapper.PigMapper;
 import com.hzzzzzy.project.model.dto.pig.PigAddRequest;
@@ -16,10 +16,8 @@ import com.hzzzzzy.project.model.dto.pig.PigExcel;
 import com.hzzzzzy.project.model.dto.pig.PigUpdateRequest;
 import com.hzzzzzy.project.model.entity.Hogring;
 import com.hzzzzzy.project.model.entity.Pig;
-import com.hzzzzzy.project.model.entity.User;
 import com.hzzzzzy.project.model.vo.PigDetailVO;
 import com.hzzzzzy.project.model.vo.PigVO;
-import com.hzzzzzy.project.model.vo.UserVO;
 import com.hzzzzzy.project.service.HogringService;
 import com.hzzzzzy.project.service.PigService;
 import com.hzzzzzy.project.service.UserService;
@@ -29,14 +27,14 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,6 +50,7 @@ import static com.hzzzzzy.project.constant.UserConstant.PIG_ADMIN;
 */
 @Service
 @Slf4j
+@EnableTransactionManagement
 public class PigServiceImpl extends ServiceImpl<PigMapper, Pig>
     implements PigService {
     @Autowired
@@ -114,18 +113,32 @@ public class PigServiceImpl extends ServiceImpl<PigMapper, Pig>
         }
         Pig pig = new Pig();
         BeanUtils.copyProperties(pigAddRequest, pig);
+        Integer pigId = pig.getId();
         boolean flag = this.save(pig);
         if (!flag){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR);
         }
-        return pig.getId();
+        // 添加肉猪时，将肉猪所在猪舍关联添加肉猪id
+        Integer hogringId = pigAddRequest.getHogringId();
+        Hogring hogring = hogringService.getById(hogringId);
+        Gson gson = new Gson();
+        String pigIdJson = hogring.getPigId();
+        List<Integer> pidList = gson.fromJson(pigIdJson, new TypeToken<List<Integer>>(){}.getType());
+        pidList.forEach(id->{
+            if (id == pigId){
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"已存在该肉猪id");
+            }
+        });
+        pidList.add(pigId);
+        hogring.setPigId(gson.toJson(pidList));
+        hogringService.updateById(hogring);
+        return pigId;
     }
 
 
     /**
      * 多条件动态查询
      *
-     * @param id
      * @param breed
      * @param age
      * @param gender
@@ -137,12 +150,11 @@ public class PigServiceImpl extends ServiceImpl<PigMapper, Pig>
      * @return
      */
     @Override
-    public List<PigVO> searchBy(Integer id, String breed, Integer age, Integer gender, Integer health, Integer status, BigDecimal weight_pre,BigDecimal weight_suf,String feedType) {
+    public List<PigVO> searchBy(String breed, Integer age, Integer gender, Integer health, Integer status, BigDecimal weight_pre,BigDecimal weight_suf,String feedType) {
 
         LambdaQueryWrapper<Pig> queryWrapper = new LambdaQueryWrapper<>();
         //添加查询条件
-        queryWrapper.eq(id != null,Pig::getId,id);
-        queryWrapper.eq(StringUtils.isNotBlank(breed),Pig::getBreed,breed);
+        queryWrapper.like(StringUtils.isNotBlank(breed),Pig::getBreed,breed);
         queryWrapper.eq((age != null),Pig::getAge,age);
         queryWrapper.eq(gender == MALE || gender == FEMALE,Pig::getGender,gender);
         queryWrapper.eq(health == UNHEALTHY || health == SUB_HEALTHY || health == HEALTHY,Pig::getHealth,health);
@@ -153,7 +165,7 @@ public class PigServiceImpl extends ServiceImpl<PigMapper, Pig>
         if (weight_suf != null){
             queryWrapper.le(weight_suf.compareTo(ASSIST_IN_JUDGMENT) > -1,Pig::getWeight,weight_suf);
         }
-        queryWrapper.eq(StringUtils.isNotBlank(feedType),Pig::getFeedType,feedType);
+        queryWrapper.like(StringUtils.isNotBlank(feedType),Pig::getFeedType,feedType);
         List<Pig> pigList = this.list(queryWrapper);
         List<PigVO> pigVOList = new ArrayList<>();
         pigList.forEach((Pig pig)->{
@@ -222,14 +234,24 @@ public class PigServiceImpl extends ServiceImpl<PigMapper, Pig>
         if (!isAdmin(request)){
             throw new BusinessException(ErrorCode.FORBIDDEN_ERROR);
         }
-        if (pigDeleteRequest == null || pigDeleteRequest.getId() <= 0) {
+        Integer pigId = pigDeleteRequest.getId();
+        if (pigDeleteRequest == null || pigId <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean flag = this.removeById(pigDeleteRequest.getId());
-        if (!flag){
+        // 关联删除
+        Pig pig = this.getById(pigId);
+        boolean flag1 = this.removeById(pigId);
+        Hogring hogring = hogringService.getById(pig.getHogringId());
+        String pigIdJson = hogring.getPigId();
+        Gson gson = new Gson();
+        List<Integer> pigIdList = gson.fromJson(pigIdJson, new TypeToken<List<Integer>>() {}.getType());
+        pigIdList.removeIf(id -> id == pigId);
+        hogring.setPigId(gson.toJson(pigIdList));
+        boolean flag2 = hogringService.updateById(hogring);
+        if (!flag2 || !flag1){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"删除信息失败");
         }
-        return flag;
+        return flag1 && flag2;
     }
 
 

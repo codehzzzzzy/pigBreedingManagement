@@ -183,29 +183,6 @@ public class HogringServiceImpl extends ServiceImpl<HogringMapper, Hogring>
     }
 
 
-    /**
-     * 获取猪舍内肉猪列表
-     *
-     * @param pigIdListGetRequest
-     * @param request
-     * @return
-     */
-    @Override
-    public List<PigInHoringVO> getPigList(PigIdListGetRequest pigIdListGetRequest, HttpServletRequest request) {
-        if (pigIdListGetRequest == null){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"参数为空");
-        }
-        List<Integer> pigIdList = pigIdListGetRequest.getPigId();
-        List<PigInHoringVO> pigInHoringVOList = new ArrayList<>();
-        pigIdList.forEach((Integer pigId)->{
-            Pig pig = pigService.getById(pigId);
-            PigInHoringVO pigInHoringVO = new PigInHoringVO();
-            BeanUtils.copyProperties(pig,pigInHoringVO);
-            pigInHoringVOList.add(pigInHoringVO);
-        });
-        return pigInHoringVOList;
-    }
-
 
     /**
      * 分页获取所有猪舍信息

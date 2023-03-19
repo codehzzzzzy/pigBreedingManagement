@@ -55,6 +55,6 @@ create table user
     pwd             varchar(512)                           not null comment '密码',
     create_time     datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time     datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    is_delete       tinyint      default 0                 not null comment '是否删除(0.不删除;1.删除)',
+    is_deleted       tinyint      default 0                 not null comment '是否删除(0.不删除;1.删除)',
     type            tinyint      default 1                 not null comment '管理员类别(1.总管理员;2.猪舍管理员;3.猪只信息管理员;4.饲料管理员;5.进出库管理员)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin comment '管理员';

@@ -167,11 +167,10 @@ public class UserController {
      * 获取管理员列表
      *
      * @param userQueryRequest
-     * @param request
      * @return
      */
     @GetMapping("/list")
-    public BaseResponse<List<UserVO>> listUser(UserQueryRequest userQueryRequest, HttpServletRequest request) {
+    public BaseResponse<List<UserVO>> listUser(UserQueryRequest userQueryRequest) {
         List<UserVO> userVOList = userService.listUser(userQueryRequest);
         return ResultUtils.success(userVOList);
     }
@@ -183,9 +182,9 @@ public class UserController {
      * @param userQueryRequest
      * @return
      */
-    @GetMapping("/list/page/{current}/{size}")
-    public BaseResponse<Page<UserVO>> listUserByPage(UserQueryRequest userQueryRequest,@PathVariable long current,@PathVariable long size) {
-        Page<UserVO> page = userService.getAll(userQueryRequest, current, size);
+    @GetMapping("/list/page")
+    public BaseResponse<Page<UserVO>> listUserByPage(UserQueryRequest userQueryRequest) {
+        Page<UserVO> page = userService.getAll(userQueryRequest);
         if (page == null){
             return new BaseResponse<>(ErrorCode.NOT_FOUND_ERROR);
         }

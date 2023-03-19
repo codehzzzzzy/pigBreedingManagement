@@ -27,11 +27,6 @@ public class HogringAddRequest {
     private Integer hogringStatus;
 
     /**
-     * 管理人员id
-     */
-    private Long userId;
-
-    /**
      * 猪只id
      */
     private List<Integer> pigId;

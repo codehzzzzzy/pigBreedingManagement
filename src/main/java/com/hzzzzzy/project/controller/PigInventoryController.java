@@ -68,7 +68,7 @@ public class PigInventoryController {
      *
      * @param response
      */
-    @RequestMapping("/export")
+    @GetMapping("/export")
     public BaseResponse<Boolean> exportExcel(HttpServletResponse response){
         ExcelWriterSheetBuilder sheetBuilder = ExcelUtils.export(response);
         boolean flag = pigInventoryService.export(response, sheetBuilder);

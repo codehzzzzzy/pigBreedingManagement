@@ -44,7 +44,6 @@ public interface PigService extends IService<Pig> {
     /**
      * 多条件动态查询
      *
-     * @param id
      * @param breed
      * @param age
      * @param gender
@@ -55,7 +54,7 @@ public interface PigService extends IService<Pig> {
      * @param feedType
      * @return
      */
-    List<PigVO> searchBy(Integer id, String breed, Integer age, Integer gender, Integer health, Integer status, BigDecimal weight_pre,BigDecimal weight_suf,String feedType);
+    List<PigVO> searchBy(String breed, Integer age, Integer gender, Integer health, Integer status, BigDecimal weight_pre,BigDecimal weight_suf,String feedType);
 
 
     /**

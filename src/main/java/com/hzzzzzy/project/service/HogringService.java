@@ -60,14 +60,6 @@ public interface HogringService extends IService<Hogring> {
     boolean delete(HogringDeleteRequest hogringDeleteRequest, HttpServletRequest request);
 
 
-    /**
-     * 获取猪舍内肉猪列表
-     *
-     * @param pigIdListGetRequest
-     * @param request
-     */
-    List<PigInHoringVO> getPigList(PigIdListGetRequest pigIdListGetRequest, HttpServletRequest request);
-
 
     /**
      * 分页获取所有猪舍信息

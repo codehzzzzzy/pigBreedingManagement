@@ -90,11 +90,9 @@ public interface UserService extends IService<User> {
      * 分页获取管理员列表
      *
      * @param userQueryRequest
-     * @param current
-     * @param size
      * @return
      */
-    Page<UserVO> getAll(UserQueryRequest userQueryRequest, long current, long size);
+    Page<UserVO> getAll(UserQueryRequest userQueryRequest);
 
 
     /**

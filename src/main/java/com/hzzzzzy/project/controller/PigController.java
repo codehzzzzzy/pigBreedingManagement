@@ -15,6 +15,8 @@ import com.hzzzzzy.project.model.vo.PigVO;
 import com.hzzzzzy.project.service.PigService;
 import com.hzzzzzy.project.model.entity.Pig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,7 +38,6 @@ public class PigController {
     /**
      * 多条件动态查询
      *
-     * @param id
      * @param breed
      * @param age
      * @param gender
@@ -48,8 +49,8 @@ public class PigController {
      * @return
      */
     @GetMapping("/searchBy")
-    public BaseResponse<List<PigVO>> searchBy(Integer id, String breed, Integer age, Integer gender, Integer health, Integer status, BigDecimal weight_pre, BigDecimal weight_suf, String feedType){
-        List<PigVO> pigList = pigService.searchBy(id, breed, age, gender, health, status, weight_pre, weight_suf,feedType);
+    public BaseResponse<List<PigVO>> searchBy(String breed, Integer age, Integer gender, Integer health, Integer status, BigDecimal weight_pre, BigDecimal weight_suf, String feedType){
+        List<PigVO> pigList = pigService.searchBy(breed, age, gender, health, status, weight_pre, weight_suf,feedType);
         if (pigList==null){
             return new BaseResponse<>(ErrorCode.NOT_FOUND_ERROR);
         }
@@ -92,6 +93,7 @@ public class PigController {
      * @return
      */
     @PostMapping("/add")
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor=Exception.class)
     public BaseResponse<Long> add(@RequestBody PigAddRequest pigAddRequest, HttpServletRequest request) {
         if (pigAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -107,7 +109,7 @@ public class PigController {
      * @param response
      * @throws Exception
      */
-    @RequestMapping("/export")
+    @GetMapping("/export")
     public BaseResponse<Boolean> exportExcel(HttpServletResponse response){
         ExcelWriterSheetBuilder sheetBuilder = ExcelUtils.export(response);
         boolean flag = pigService.export(response, sheetBuilder);
@@ -122,6 +124,7 @@ public class PigController {
      * @return
      */
     @PostMapping("/delete")
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor=Exception.class)
     public BaseResponse<Boolean> delete(@RequestBody PigDeleteRequest pigDeleteRequest, HttpServletRequest request) {
         boolean flag = pigService.delete(pigDeleteRequest, request);
         return ResultUtils.success(flag);
