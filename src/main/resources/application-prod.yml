@@ -1,6 +1,6 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://xxx/pig_breeding_management
+    url: jdbc:mysql://43.138.200.14/pig_breeding_management
     username: root
     password: 6aad3d9cefc9e935

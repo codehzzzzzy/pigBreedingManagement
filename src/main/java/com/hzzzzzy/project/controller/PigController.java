@@ -8,6 +8,7 @@ import com.hzzzzzy.project.common.ResultUtils;
 import com.hzzzzzy.project.exception.BusinessException;
 import com.hzzzzzy.project.model.dto.pig.PigAddRequest;
 import com.hzzzzzy.project.model.dto.pig.PigDeleteRequest;
+import com.hzzzzzy.project.model.dto.pig.PigExcel;
 import com.hzzzzzy.project.model.dto.pig.PigUpdateRequest;
 import com.hzzzzzy.project.model.dto.user.UserDeleteRequest;
 import com.hzzzzzy.project.model.vo.PigDetailVO;
@@ -111,7 +112,7 @@ public class PigController {
      */
     @GetMapping("/export")
     public BaseResponse<Boolean> exportExcel(HttpServletResponse response){
-        ExcelWriterSheetBuilder sheetBuilder = ExcelUtils.export(response);
+        ExcelWriterSheetBuilder sheetBuilder = ExcelUtils.export(response, PigExcel.class);
         boolean flag = pigService.export(response, sheetBuilder);
         return ResultUtils.success(flag);
     }

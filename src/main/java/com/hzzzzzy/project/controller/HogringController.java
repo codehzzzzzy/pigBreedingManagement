@@ -10,10 +10,7 @@ import com.hzzzzzy.project.exception.BusinessException;
 import com.hzzzzzy.project.model.dto.feed.FeedAddRequest;
 import com.hzzzzzy.project.model.dto.feed.FeedDeleteRequest;
 import com.hzzzzzy.project.model.dto.feed.FeedUpdateRequest;
-import com.hzzzzzy.project.model.dto.hogring.HogringAddRequest;
-import com.hzzzzzy.project.model.dto.hogring.HogringDeleteRequest;
-import com.hzzzzzy.project.model.dto.hogring.HogringUpdateRequest;
-import com.hzzzzzy.project.model.dto.hogring.PigIdListGetRequest;
+import com.hzzzzzy.project.model.dto.hogring.*;
 import com.hzzzzzy.project.model.entity.Hogring;
 import com.hzzzzzy.project.model.entity.Pig;
 import com.hzzzzzy.project.model.vo.HoringVO;
@@ -65,7 +62,7 @@ public class HogringController {
      */
     @GetMapping("/export")
     public BaseResponse<Boolean> exportExcel(HttpServletResponse response){
-        ExcelWriterSheetBuilder sheetBuilder = ExcelUtils.export(response);
+        ExcelWriterSheetBuilder sheetBuilder = ExcelUtils.export(response, HogringExcel.class);
         boolean flag = hogringService.export(response, sheetBuilder);
         return ResultUtils.success(flag);
     }

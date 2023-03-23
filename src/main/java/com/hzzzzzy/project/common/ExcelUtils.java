@@ -25,7 +25,7 @@ import java.util.UUID;
  */
 public class ExcelUtils {
     @SneakyThrows
-    public static ExcelWriterSheetBuilder export(HttpServletResponse response){
+    public static <R> ExcelWriterSheetBuilder export(HttpServletResponse response, Class<R> r){
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
         String fileName = UUID.randomUUID().toString();
@@ -40,7 +40,7 @@ public class ExcelUtils {
         WriteCellStyle contentWriteCellStyle = new WriteCellStyle();
         HorizontalCellStyleStrategy horizontalCellStyleStrategy = new HorizontalCellStyleStrategy(headWriteCellStyle, contentWriteCellStyle);
         try {
-            ExcelWriterSheetBuilder sheetBuilder = EasyExcel.write(response.getOutputStream(), PigExcel.class).sheet("sheet").registerWriteHandler(horizontalCellStyleStrategy);
+            ExcelWriterSheetBuilder sheetBuilder = EasyExcel.write(response.getOutputStream(), r).sheet("sheet").registerWriteHandler(horizontalCellStyleStrategy);
             return sheetBuilder;
         } catch (IOException e) {
             // 重置response

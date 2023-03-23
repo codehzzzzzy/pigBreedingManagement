@@ -10,6 +10,7 @@ import com.hzzzzzy.project.common.ResultUtils;
 import com.hzzzzzy.project.exception.BusinessException;
 import com.hzzzzzy.project.model.dto.feed.FeedAddRequest;
 import com.hzzzzzy.project.model.dto.feed.FeedDeleteRequest;
+import com.hzzzzzy.project.model.dto.feed.FeedManagementExcel;
 import com.hzzzzzy.project.model.dto.feed.FeedUpdateRequest;
 import com.hzzzzzy.project.model.dto.pig.PigAddRequest;
 import com.hzzzzzy.project.model.dto.pig.PigDeleteRequest;
@@ -63,7 +64,7 @@ public class FeedController {
      */
     @GetMapping("/export")
     public BaseResponse<Boolean> exportExcel(HttpServletResponse response){
-        ExcelWriterSheetBuilder sheetBuilder = ExcelUtils.export(response);
+        ExcelWriterSheetBuilder sheetBuilder = ExcelUtils.export(response, FeedManagementExcel.class);
         boolean flag = feedManagementService.export(response, sheetBuilder);
         return ResultUtils.success(flag);
     }

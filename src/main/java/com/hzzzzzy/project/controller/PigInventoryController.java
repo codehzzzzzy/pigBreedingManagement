@@ -6,10 +6,7 @@ import com.hzzzzzy.project.common.ErrorCode;
 import com.hzzzzzy.project.common.ExcelUtils;
 import com.hzzzzzy.project.common.ResultUtils;
 import com.hzzzzzy.project.exception.BusinessException;
-import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryAddBatchRequest;
-import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryAddRequest;
-import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryDeleteRequest;
-import com.hzzzzzy.project.model.dto.PigInventory.PigInventoryUpdateRequest;
+import com.hzzzzzy.project.model.dto.PigInventory.*;
 import com.hzzzzzy.project.model.vo.PigInventoryGetOneVO;
 import com.hzzzzzy.project.model.vo.PigInventoryVO;
 import com.hzzzzzy.project.service.PigInventoryService;
@@ -70,7 +67,7 @@ public class PigInventoryController {
      */
     @GetMapping("/export")
     public BaseResponse<Boolean> exportExcel(HttpServletResponse response){
-        ExcelWriterSheetBuilder sheetBuilder = ExcelUtils.export(response);
+        ExcelWriterSheetBuilder sheetBuilder = ExcelUtils.export(response, PigInventoryExcel.class);
         boolean flag = pigInventoryService.export(response, sheetBuilder);
         return ResultUtils.success(flag);
     }
